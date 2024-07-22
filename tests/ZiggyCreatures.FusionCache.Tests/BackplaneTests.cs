@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,19 +7,21 @@ using FusionCacheTests.Stuff;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using Xunit;
 using Xunit.Abstractions;
 using ZiggyCreatures.Caching.Fusion;
 using ZiggyCreatures.Caching.Fusion.Backplane;
 using ZiggyCreatures.Caching.Fusion.Backplane.Memory;
+using ZiggyCreatures.Caching.Fusion.Backplane.MongoDb;
 using ZiggyCreatures.Caching.Fusion.Backplane.StackExchangeRedis;
 using ZiggyCreatures.Caching.Fusion.Chaos;
 
 namespace FusionCacheTests;
 
-public class BackplaneTests
+public abstract class BackplaneTests
 	: AbstractTests
 {
 	public BackplaneTests(ITestOutputHelper output)
@@ -37,24 +40,9 @@ public class BackplaneTests
 		return res;
 	}
 
-	private static readonly bool UseRedis = false;
-	private static readonly string RedisConnection = "127.0.0.1:6379,ssl=False,abortConnect=false,connectTimeout=1000,syncTimeout=1000";
+	protected abstract IFusionCacheBackplane CreateBackplane(string connectionId);
 
-	private IFusionCacheBackplane CreateBackplane(string connectionId)
-	{
-		if (UseRedis)
-			return new RedisBackplane(new RedisBackplaneOptions { Configuration = RedisConnection }, logger: CreateXUnitLogger<RedisBackplane>());
-
-		return new MemoryBackplane(new MemoryBackplaneOptions() { ConnectionId = connectionId }, logger: CreateXUnitLogger<MemoryBackplane>());
-	}
-
-	private static IDistributedCache CreateDistributedCache()
-	{
-		if (UseRedis)
-			return new RedisCache(new RedisCacheOptions { Configuration = RedisConnection });
-
-		return new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions()));
-	}
+	protected abstract IDistributedCache CreateDistributedCache();
 
 	private FusionCache CreateFusionCache(string? cacheName, SerializerType? serializerType, IDistributedCache? distributedCache, IFusionCacheBackplane? backplane, Action<FusionCacheOptions>? setupAction = null, IMemoryCache? memoryCache = null, string? cacheInstanceId = null)
 	{
@@ -1647,5 +1635,91 @@ public class BackplaneTests
 		var bar2_2 = cache2.GetOrDefault<int>("bar");
 
 		Assert.Equal(0, bar2_2);
+	}
+}
+
+public class MongoDbBackplaneTests : BackplaneTests, IDisposable
+{
+	private MongoUrlBuilder _mongoUrlBuilder;
+
+	public MongoDbBackplaneTests(ITestOutputHelper output) : base(output)
+	{
+		var connection = Environment.GetEnvironmentVariable("TEST_MONGODB");
+		_mongoUrlBuilder = new MongoUrlBuilder(connection);
+		_mongoUrlBuilder.DatabaseName = "FusionCache";
+		if (!string.IsNullOrEmpty(_mongoUrlBuilder.Password) && _mongoUrlBuilder.AuthenticationSource == null)
+		{
+			_mongoUrlBuilder.AuthenticationSource = "admin";
+		}
+	}
+
+	private List<string> _allCollectionNames = new();
+
+	public void Dispose()
+	{
+		if (_allCollectionNames.Count > 0)
+		{
+			var client = new MongoClient(_mongoUrlBuilder.ToMongoUrl());
+			var db = client.GetDatabase(_mongoUrlBuilder.DatabaseName);
+			foreach (var name in _allCollectionNames)
+			{
+				db.DropCollection(name);
+			}
+		}
+	}
+
+	protected override IFusionCacheBackplane CreateBackplane(string connectionId)
+	{
+		var options = new MongoDbBackplaneOptions()
+		{
+			CollectionName = "FusionCacheBackplane_" + connectionId,
+			DatabaseName = "FusionCache",
+			PollingInterval = TimeSpan.FromMilliseconds(50),
+			ConnectionString = _mongoUrlBuilder.ToMongoUrl().ToString(),
+			CacheConnectionId = connectionId,
+		};
+		_allCollectionNames.Add(options.CollectionName);
+		return new MongoDbBackplane(options, NullLoggerFactory.Instance);
+	}
+
+	protected override IDistributedCache CreateDistributedCache()
+	{
+		return new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions()));
+	}
+}
+
+public class InMemoryBackplaneTests : BackplaneTests
+{
+	public InMemoryBackplaneTests(ITestOutputHelper output) : base(output)
+	{
+	}
+
+	protected override IFusionCacheBackplane CreateBackplane(string connectionId)
+	{
+		return new MemoryBackplane(new MemoryBackplaneOptions() { ConnectionId = connectionId }, logger: CreateXUnitLogger<MemoryBackplane>());
+	}
+
+	protected override IDistributedCache CreateDistributedCache()
+	{
+		return new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions()));
+	}
+}
+
+public class RedisBackplaneTests : BackplaneTests
+{
+	private static readonly string RedisConnection = "127.0.0.1:6379,ssl=False,abortConnect=false,connectTimeout=1000,syncTimeout=1000";
+
+	public RedisBackplaneTests(ITestOutputHelper output) : base(output)
+	{
+	}
+
+	protected override IFusionCacheBackplane CreateBackplane(string connectionId)
+	{
+		return new RedisBackplane(new RedisBackplaneOptions { Configuration = RedisConnection }, logger: CreateXUnitLogger<RedisBackplane>());
+	}
+
+	protected override IDistributedCache CreateDistributedCache()
+	{
+		return new RedisCache(new RedisCacheOptions { Configuration = RedisConnection });
 	}
 }

@@ -1,0 +1,199 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ZiggyCreatures.FusionCache.Backplane.MongoDb</name>
+    </assembly>
+    <members>
+        <member name="T:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.InternalMongoDbBackplane">
+            <summary>
+            This is the real instance that will perform the backplane operations
+            </summary>
+        </member>
+        <member name="F:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.InternalMongoDbBackplane._subscriptionOptions">
+            <summary>
+            This is the list of the internal subscriptions.
+            </summary>
+        </member>
+        <member name="M:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.InternalMongoDbBackplane.#ctor(ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbBackplaneOptions,Microsoft.Extensions.Logging.ILoggerFactory)">
+            <summary>
+            Create the backplane on Mongodb.
+            </summary>
+        </member>
+        <member name="M:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.InternalMongoDbBackplane.Subscribe(ZiggyCreatures.Caching.Fusion.Backplane.BackplaneSubscriptionOptions)">
+            <inheritdoc />
+        </member>
+        <member name="M:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.InternalMongoDbBackplane.Unsubscribe(ZiggyCreatures.Caching.Fusion.Backplane.BackplaneSubscriptionOptions)">
+            <inheritdoc />
+        </member>
+        <member name="M:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.InternalMongoDbBackplane.PublishAsync(ZiggyCreatures.Caching.Fusion.Backplane.BackplaneMessage,ZiggyCreatures.Caching.Fusion.FusionCacheEntryOptions,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.InternalMongoDbBackplane.Publish(ZiggyCreatures.Caching.Fusion.Backplane.BackplaneMessage,ZiggyCreatures.Caching.Fusion.FusionCacheEntryOptions,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.InternalMongoDbBackplane.TimerCallBack(System.Object)">
+            <summary>
+            In the callback we simply poll the collection for new messages to be dispatched.
+            </summary>
+            <param name="state"></param>
+        </member>
+        <member name="T:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbBackplane">
+            <summary>
+            Broadcaster class that uses a collection in mongodb to allow for simple
+            broascasting of messages to multiple processes.
+            </summary>
+        </member>
+        <member name="M:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbBackplane.#ctor(ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbBackplaneOptions,Microsoft.Extensions.Logging.ILoggerFactory)">
+            <summary>
+            Create the backplane on Mongodb.
+            </summary>
+        </member>
+        <member name="M:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbBackplane.Subscribe(ZiggyCreatures.Caching.Fusion.Backplane.BackplaneSubscriptionOptions)">
+            <inheritdoc />
+        </member>
+        <member name="M:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbBackplane.Unsubscribe">
+            <inheritdoc />
+        </member>
+        <member name="M:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbBackplane.PublishAsync(ZiggyCreatures.Caching.Fusion.Backplane.BackplaneMessage,ZiggyCreatures.Caching.Fusion.FusionCacheEntryOptions,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbBackplane.Publish(ZiggyCreatures.Caching.Fusion.Backplane.BackplaneMessage,ZiggyCreatures.Caching.Fusion.FusionCacheEntryOptions,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="P:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbBackplaneMessage.Message">
+            <summary>
+            This is the real message that we want to send on the backplane.
+            </summary>
+        </member>
+        <member name="T:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbBackplaneOptions">
+            <summary>
+            Configuratino for backplane based on MongoDb
+            </summary>
+        </member>
+        <member name="P:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbBackplaneOptions.ConnectionString">
+            <summary>
+            Connection string used to connect to MongoDb, it is ignored
+            if <see cref="P:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbBackplaneOptions.MongoClientFactory"/> is set. The preferred way
+            to configure this component is using MongoClientFactory parameter
+            so you can create the client with all the possible option and you can use the
+            single client approach.
+            </summary>
+        </member>
+        <member name="P:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbBackplaneOptions.CacheConnectionId">
+            <summary>
+            Do not know if this is really needed, but this is used to allow more instances
+            of <see cref="T:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbBackplane"/> to share the same collection and thus the
+            very same notification handlers.
+            </summary>
+        </member>
+        <member name="P:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbBackplaneOptions.DatabaseName">
+            <summary>
+            Name of the database to use, it is mandatory.
+            </summary>
+        </member>
+        <member name="P:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbBackplaneOptions.CollectionName">
+            <summary>
+            Name of the collection used to store messages to be exchanged.
+            </summary>
+        </member>
+        <member name="P:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbBackplaneOptions.DisableChangeTracking">
+            <summary>
+            If you want to avoid using change tracking even if it is available this
+            property allows you to force polling.
+            </summary>
+        </member>
+        <member name="P:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbBackplaneOptions.PollingInterval">
+            <summary>
+            If you do not have Change Tracking enabled, or if you disable it with
+            <see cref="P:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbBackplaneOptions.DisableChangeTracking"/> you can vary the polling time with this
+            paramter. You will expect a poll for each interval specified.
+            </summary>
+        </member>
+        <member name="P:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbBackplaneOptions.MongoClientFactory">
+            <summary>
+            To connect to Mongodb we can use the connection string or the
+            caller can directly configure a factory that create Mongo client
+            with the desired configuration. This is especially useful to create
+            a single <see cref="T:MongoDB.Driver.IMongoClient"/> for the entire application.
+            If this value is different from null, <see cref="P:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbBackplaneOptions.ConnectionString"/>
+            is not used anymore.
+            </summary>
+        </member>
+        <member name="T:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbChangeStreamHelper">
+            <summary>
+            Helps using change stream to be notified of changes in a collection it is really
+            more educated for mongodb than polling.
+            </summary>
+        </member>
+        <member name="F:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbChangeStreamHelper._notifications">
+            <summary>
+            For each key == database, we have a list of database notifications.
+            </summary>
+        </member>
+        <member name="M:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbChangeStreamHelper.CreateFromUrl(MongoDB.Driver.IMongoClient,Microsoft.Extensions.Logging.ILogger{ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbChangeStreamHelper})">
+            <summary>
+            Create a <see cref="T:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.IMongoDbChangeStreamHelper"/>
+            </summary>
+            <param name="mongoClient"></param>
+            <param name="logger"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbChangeStreamHelper.RegisterNotifier(System.String,System.String,System.Func{ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.ChangeStreamHelperChangedEventArgs,System.Threading.CancellationToken,System.Threading.Tasks.Task})">
+            <summary>
+            Register an handler.
+            </summary>
+            <param name="database"></param>
+            <param name="collection"></param>
+            <param name="notificationFunction"></param>
+        </member>
+        <member name="M:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbChangeStreamHelper.SetupNotificationForDatabase(System.String,ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbChangeStreamHelper.DatabaseNotifications)">
+            <summary>
+            Create notification for the entire database, this is used because we can have lots of poller so
+            we can monitor the ENTIRE database then dispatch internally to the correct handler.
+            </summary>
+            <param name="databaseName"></param>
+            <param name="notifications"></param>
+        </member>
+        <member name="M:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbChangeStreamHelper.SupportsChangeStreams">
+            <summary>
+            Check if the current server supports change streams.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbChangeStreamHelper.Dispose(System.Boolean)">
+            <summary>
+            Dispose the helper releaseing all the tracking.
+            </summary>
+            <param name="disposing"></param>
+        </member>
+        <member name="M:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbChangeStreamHelper.Dispose">
+            <summary>
+            Dispose the helper releaseing all the tracking.
+            </summary>
+        </member>
+        <member name="T:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.MongoDbChangeStreamHelper.DatabaseNotifications">
+            <summary>
+            Key is collection and value is all lamda that I need to notify for a single collection.
+            </summary>
+        </member>
+        <member name="T:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.IMongoDbChangeStreamHelper">
+            <summary>
+            Interface to abstract the concept of the stream helper.
+            </summary>
+        </member>
+        <member name="M:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.IMongoDbChangeStreamHelper.RegisterNotifier(System.String,System.String,System.Func{ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.ChangeStreamHelperChangedEventArgs,System.Threading.CancellationToken,System.Threading.Tasks.Task})">
+            <summary>
+            Register a notifier on a database collection with a notification function.
+            </summary>
+            <param name="database"></param>
+            <param name="collection"></param>
+            <param name="notificationFunction"></param>
+        </member>
+        <member name="M:ZiggyCreatures.Caching.Fusion.Backplane.MongoDb.IMongoDbChangeStreamHelper.SupportsChangeStreams">
+            <summary>
+            Analyze feature flags, and actual connection string to mongo to understand if a change stream is supported.
+            </summary>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

@@ -49,6 +49,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZiggyCreatures.FusionCache.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZiggyCreatures.FusionCache.MicrosoftHybridCache", "src\ZiggyCreatures.FusionCache.MicrosoftHybridCache\ZiggyCreatures.FusionCache.MicrosoftHybridCache.csproj", "{1D99DBC8-5ADD-4D0A-B32F-FBD10452C1A9}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZiggyCreatures.FusionCache.Backplane.MongoDb", "src\ZiggyCreatures.FusionCache.Backplane.MongoDb\ZiggyCreatures.FusionCache.Backplane.MongoDb.csproj", "{D91E49E6-DE52-4D51-883B-D9D0AE187D7A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,6 +125,10 @@ Global
 		{1D99DBC8-5ADD-4D0A-B32F-FBD10452C1A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D99DBC8-5ADD-4D0A-B32F-FBD10452C1A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D99DBC8-5ADD-4D0A-B32F-FBD10452C1A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D91E49E6-DE52-4D51-883B-D9D0AE187D7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D91E49E6-DE52-4D51-883B-D9D0AE187D7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D91E49E6-DE52-4D51-883B-D9D0AE187D7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D91E49E6-DE52-4D51-883B-D9D0AE187D7A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -145,6 +151,7 @@ Global
 		{BDB46997-84D1-4CB5-B967-7F820820CB8E} = {C6F3C570-C68C-4A95-960E-82778306BDBA}
 		{DA78EB72-93B1-4A77-8525-79AF3EEC4C8D} = {34B53F49-F5C5-4850-B79E-59AD130379C6}
 		{1D99DBC8-5ADD-4D0A-B32F-FBD10452C1A9} = {34B53F49-F5C5-4850-B79E-59AD130379C6}
+		{D91E49E6-DE52-4D51-883B-D9D0AE187D7A} = {34B53F49-F5C5-4850-B79E-59AD130379C6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {92916FA2-FCAC-406E-BF3F-0A2CE9512EF0}
