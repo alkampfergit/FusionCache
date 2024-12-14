@@ -7,6 +7,7 @@ using FusionCacheTests.Stuff;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -720,7 +721,7 @@ public abstract class BackplaneTests
 		await Task.Delay(simulatedDelay);
 
 		var elapsedMs = sw.GetElapsedWithSafePad().TotalMilliseconds;
-		logger.LogTrace($"Elapsed (with extra pad): {elapsedMs} ms");
+		logger.LogTrace("Elapsed (with extra pad): {elapsedMs} ms", elapsedMs);
 
 		Assert.True(elapsedMs >= simulatedDelay.TotalMilliseconds);
 		Assert.True(elapsedMs < simulatedDelay.TotalMilliseconds * 2);
